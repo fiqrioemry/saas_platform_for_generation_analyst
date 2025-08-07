@@ -1,7 +1,7 @@
 <script lang="ts">
 	import '../app.css';
 	import { onMount } from 'svelte';
-	import { profile } from '$lib/stores/auth';
+	import { user } from '$lib/stores/auth';
 	import { supabase } from '$lib/supabase';
 	import { Loader } from '@lucide/svelte';
 	import favicon from '$lib/assets/favicon.svg';
@@ -11,14 +11,13 @@
 	let loading = $state(true);
 
 	onMount(() => {
-		// Get initial session
-		profile.set(data.profile ?? null);
+		user.set(data.user ?? null);
 
 		const {
 			data: { subscription }
 		} = supabase.auth.onAuthStateChange((_, newSession) => {
 			if (newSession?.expires_at !== data.session?.expires_at) {
-				profile.set(data.profile ?? null);
+				user.set(data.user ?? null);
 				invalidate('supabase:auth');
 			}
 		});

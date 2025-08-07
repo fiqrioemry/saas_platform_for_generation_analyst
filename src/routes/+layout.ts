@@ -29,9 +29,5 @@ export const load = async ({ data, depends, fetch }) => {
 		data: { user }
 	} = await supabase.auth.getUser();
 
-	const {
-		data: { profile }
-	} = await supabase.rpc('get_profile', { p_user_id: user?.id });
-
-	return { supabase, session, user, profile };
+	return { supabase, session, user };
 };
