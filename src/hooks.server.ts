@@ -17,25 +17,19 @@ const supabase: Handle = async ({ event, resolve }) => {
 	});
 
 	event.locals.safeGetSession = async () => {
-		console.log('Fetching session and user hooks : ');
 		const {
 			data: { user },
 			error
 		} = await event.locals.supabase.auth.getUser();
 		if (error) {
-			return { session: null, user: null, profile: null };
+			return { session: null, user: null };
 		}
 
 		const {
 			data: { session }
 		} = await event.locals.supabase.auth.getSession();
 
-		const {
-			data: { profile }
-		} = await event.locals.supabase.rpc('get_profile', { p_user_id: user?.id });
-
-		console.log('!!Session and user fetched:', { session, user, profile });
-		return { session, user, profile };
+		return { session, user };
 	};
 
 	return resolve(event, {

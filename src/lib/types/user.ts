@@ -1,3 +1,9 @@
+export interface User {
+	id: string;
+	profile?: Profile;
+	balance?: Balance;
+}
+
 export interface Profile {
 	id: string;
 	email: string;

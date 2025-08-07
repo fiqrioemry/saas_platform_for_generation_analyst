@@ -7,6 +7,6 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
 	const { user } = await safeGetSession();
 
 	if (!user) {
-		throw redirect(303, '/signin');
+		throw redirect(303, '/');
 	}
 };

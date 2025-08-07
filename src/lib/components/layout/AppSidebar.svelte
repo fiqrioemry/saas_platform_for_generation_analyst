@@ -1,4 +1,4 @@
-<!-- src/lib/components/dashboard/AppSidebar.svelte -->
+<!-- src/lib/components/layout/AppSidebar.svelte -->
 <script lang="ts">
 	// Core imports
 	import { page } from '$app/state';
@@ -6,33 +6,53 @@
 
 	// Icon imports
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
-	import { Zap, LogOut, CreditCard, GraduationCap } from '@lucide/svelte';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
+	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
+	import { Zap, LogOut, CreditCard, GraduationCap, Settings, MailQuestion } from '@lucide/svelte';
 
 	// UI Component imports
-	import { profile } from '$lib/stores/auth';
+	import { user } from '$lib/stores/auth';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 
 	const navSections = [
 		{
-			title: 'Feature Services',
+			title: 'AI Features',
 			icon: Zap,
-			url: '/services'
+			url: '/features',
+			section: 'services'
+		},
+		{
+			title: 'Services',
+			icon: Zap,
+			url: '/services',
+			section: 'services'
+		},
+		{
+			title: 'Archive',
+			icon: CreditCard,
+			url: '/archive'
 		},
 		{
 			title: 'Transactions',
 			icon: CreditCard,
-			url: '/transactions'
+			url: '/transactions',
+			section: 'purchasement'
 		},
 		{
-			title: 'usages',
+			title: 'Usage',
 			icon: GraduationCap,
-			url: '/usages'
+			url: '/usages',
+			section: 'purchasement'
 		}
 	];
 
+	// Props dari parent
+	let { openSidebar } = $props();
+
 	// Derived state
 	const currentPath = $derived(page.url.pathname);
+	const isCollapsed = $derived(!openSidebar);
 
 	// Utility functions
 	function isActive(url: string): boolean {
@@ -44,49 +64,156 @@
 	}
 </script>
 
-<Sidebar.Root>
+<Sidebar.Root class="border-r-0" collapsible="icon">
 	<Sidebar.Content class="border-r border-border bg-background">
 		<Sidebar.Group class="h-full p-0">
-			<!-- Logo Section -->
-			<div class="flex h-16 items-center border-b border-border px-4">
-				<h1>Logo App</h1>
+			<!-- Header -->
+			<div
+				class="flex h-14 items-center border-b border-border px-3 {isCollapsed
+					? 'justify-center'
+					: 'justify-between'}"
+			>
+				{#if !isCollapsed}
+					<h1 class="text-lg font-semibold">AI App</h1>
+				{/if}
+				<Sidebar.Trigger class="h-8 w-8" />
 			</div>
 
 			<!-- Navigation Menu -->
-			<Sidebar.Menu class="space-y-0 p-2">
-				{#each navSections as section}
-					<Button
-						href={section.url}
-						class="w-full justify-between hover:-translate-y-0"
-						variant={isActive(section.url) ? 'default' : 'ghost'}
-					>
-						<div class="flex items-center gap-2">
-							<section.icon class="h-4 w-4" />
-							<span>{section.title}</span>
-						</div>
-					</Button>
+			<Sidebar.Menu class="flex-1 space-y-1 bg-red-500 px-3">
+				<!-- Services Section -->
+				{#if !isCollapsed}
+					<div class="mb-2 text-xs font-medium text-muted-foreground">SERVICES</div>
+				{/if}
+				{#each navSections.filter((s) => s.section === 'services') as section}
+					<Tooltip.Root>
+						<Tooltip.Trigger>
+							<Button
+								href={section.url}
+								class="h-9 justify-start gap-2 {isCollapsed ? 'w-9 justify-center p-0' : 'w-full'}"
+								variant={isActive(section.url) ? 'secondary' : 'ghost'}
+								size="sm"
+							>
+								<section.icon class="h-4 w-4 shrink-0" />
+								{#if !isCollapsed}
+									<span class="text-sm">{section.title}</span>
+								{/if}
+							</Button>
+						</Tooltip.Trigger>
+						{#if isCollapsed}
+							<Tooltip.Content side="right">
+								<p>{section.title}</p>
+							</Tooltip.Content>
+						{/if}
+					</Tooltip.Root>
 				{/each}
 
-				<div class="min-h-8"></div>
-			</Sidebar.Menu>
-		</Sidebar.Group>
+				<!-- Archive Section -->
+				{#each navSections.filter((s) => !s.section) as section}
+					<Tooltip.Root>
+						<Tooltip.Trigger>
+							<Button
+								href={section.url}
+								class="h-9 justify-start gap-2 {isCollapsed ? 'w-9 justify-center p-0' : 'w-full'}"
+								variant={isActive(section.url) ? 'secondary' : 'ghost'}
+								size="sm"
+							>
+								<section.icon class="h-4 w-4 shrink-0" />
+								{#if !isCollapsed}
+									<span class="text-sm">{section.title}</span>
+								{/if}
+							</Button>
+						</Tooltip.Trigger>
+						{#if isCollapsed}
+							<Tooltip.Content side="right">
+								<p>{section.title}</p>
+							</Tooltip.Content>
+						{/if}
+					</Tooltip.Root>
+				{/each}
 
-		<!-- Footer Section -->
-		<div class="space-y-2 border-t border-border p-2">
-			<div>
-				<Avatar.Root>
-					<Avatar.Image src={$profile?.avatar_url} alt="@shadcn" />
-					<Avatar.Fallback>CN</Avatar.Fallback>
-				</Avatar.Root>
-				<div>
-					<span class="text-sm font-medium">{$profile?.display_name}</span>
-					<span class="text-xs text-muted-foreground">{$profile?.email}</span>
-				</div>
+				<!-- Purchasement Section -->
+				{#if !isCollapsed}
+					<div class="mb-2 text-xs font-medium text-muted-foreground">PURCHASEMENT</div>
+				{/if}
+				{#each navSections.filter((s) => s.section === 'purchasement') as section}
+					<Tooltip.Root>
+						<Tooltip.Trigger>
+							<Button
+								href={section.url}
+								class="h-9 justify-start gap-2 {isCollapsed ? 'w-9 justify-center p-0' : 'w-full'}"
+								variant={isActive(section.url) ? 'secondary' : 'ghost'}
+								size="sm"
+							>
+								<section.icon class="h-4 w-4 shrink-0" />
+								{#if !isCollapsed}
+									<span class="text-sm">{section.title}</span>
+								{/if}
+							</Button>
+						</Tooltip.Trigger>
+						{#if isCollapsed}
+							<Tooltip.Content side="right">
+								<p>{section.title}</p>
+							</Tooltip.Content>
+						{/if}
+					</Tooltip.Root>
+				{/each}
+			</Sidebar.Menu>
+
+			<!-- Footer Section -->
+			<div class="border-t border-border">
+				<DropdownMenu.Root>
+					<DropdownMenu.Trigger>
+						<Button
+							variant="ghost"
+							class="flex items-center gap-2 {isCollapsed
+								? 'h-9 w-9 justify-center p-0'
+								: 'w-full justify-start'}"
+						>
+							<Avatar.Root class="shrink-0 rounded-lg {isCollapsed ? 'h-6 w-6' : 'h-8 w-8'}">
+								<Avatar.Image
+									src={$user?.user_metadata.avatar_url}
+									alt={$user?.user_metadata.full_name}
+								/>
+								<Avatar.Fallback class={isCollapsed ? 'text-xs' : 'text-sm'}>
+									{$user?.user_metadata.full_name?.charAt(0) || 'U'}
+								</Avatar.Fallback>
+							</Avatar.Root>
+							{#if !isCollapsed}
+								<div class="min-w-0 text-start">
+									<span class="block truncate text-sm font-medium"
+										>{$user?.user_metadata.full_name}</span
+									>
+									<p class="truncate text-xs text-muted-foreground">{$user?.email}</p>
+								</div>
+							{/if}
+						</Button>
+					</DropdownMenu.Trigger>
+					<DropdownMenu.Content class="w-60" align={isCollapsed ? 'center' : 'start'}>
+						<DropdownMenu.Label>{$user?.email}</DropdownMenu.Label>
+						<DropdownMenu.Separator />
+						<DropdownMenu.Group>
+							<a href="/settings">
+								<DropdownMenu.Item>
+									<Settings />
+									<span>Settings</span>
+								</DropdownMenu.Item>
+							</a>
+							<a href="/support">
+								<DropdownMenu.Item>
+									<MailQuestion />
+									<span>Support</span>
+								</DropdownMenu.Item>
+							</a>
+						</DropdownMenu.Group>
+						<DropdownMenu.Separator />
+						<DropdownMenu.Item onclick={handleLogout}>
+							<LogOut />
+							<span>Log out</span>
+						</DropdownMenu.Item>
+					</DropdownMenu.Content>
+				</DropdownMenu.Root>
 			</div>
-			<Button onclick={handleLogout} variant="destructive" class="w-full">
-				<LogOut class="h-4 w-4" />
-				<span>Logout</span>
-			</Button>
-		</div>
+		</Sidebar.Group>
 	</Sidebar.Content>
 </Sidebar.Root>
