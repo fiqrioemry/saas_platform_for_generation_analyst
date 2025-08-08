@@ -1,17 +1,10 @@
 <script lang="ts">
-	import {
-		Card,
-		CardContent,
-		CardDescription,
-		CardHeader,
-		CardTitle,
-		Button,
-		Input,
-		Label
-	} from '$lib';
-	import { signUp } from '$lib/auth';
+	import { signUp } from '$lib/api/auth';
 	import { goto } from '$app/navigation';
-	import { user } from '$lib/stores/auth';
+	import * as Card from '$lib/components/ui/card/index.js';
+	import Label from '$lib/components/ui/label/label.svelte';
+	import Input from '$lib/components/ui/input/input.svelte';
+	import Button from '$lib/components/ui/button/button.svelte';
 
 	let email = '';
 	let password = '';
@@ -19,11 +12,6 @@
 	let isLoading = false;
 	let error = '';
 	let success = '';
-
-	// Redirect if already signed in
-	$: if (isLoading) {
-		goto('/dashboard');
-	}
 
 	async function handleSignUp() {
 		if (!email || !password || !confirmPassword) {
