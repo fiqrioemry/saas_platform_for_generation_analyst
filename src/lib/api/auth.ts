@@ -37,7 +37,7 @@ export async function signOut() {
 	}
 
 	user.set(null);
-	goto('/signin');
+	goto('/signout');
 }
 
 export async function getUser() {

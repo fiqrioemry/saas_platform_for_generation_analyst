@@ -4,6 +4,7 @@
 	import { useSidebar } from '$lib/components/ui/sidebar/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import { SparklesIcon, LogOut, CreditCard, BadgeCheckIcon } from '@lucide/svelte';
+	import { signOut } from '$lib/api/auth';
 	let { user } = $props();
 	const sidebar = useSidebar();
 </script>
@@ -20,7 +21,7 @@
 					>
 						<Avatar.Root class="size-8 rounded-lg">
 							<Avatar.Image src={user.avatar_url} alt={user.full_name} />
-							<Avatar.Fallback class="rounded-lg">CN</Avatar.Fallback>
+							<Avatar.Fallback class="rounded-lg uppercase">{user.full_name[0]}</Avatar.Fallback>
 						</Avatar.Root>
 						<div class="grid flex-1 text-left text-sm leading-tight">
 							<span class="truncate font-medium">{user.full_name}</span>
@@ -39,7 +40,7 @@
 					<div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
 						<Avatar.Root class="size-8 rounded-lg">
 							<Avatar.Image src={user.avatar_url} alt={user.full_name} />
-							<Avatar.Fallback class="rounded-lg">CN</Avatar.Fallback>
+							<Avatar.Fallback class="rounded-lg uppercase">{user.full_name[0]}</Avatar.Fallback>
 						</Avatar.Root>
 						<div class="grid flex-1 text-left text-sm leading-tight">
 							<span class="truncate font-medium">{user.full_name}</span>
@@ -70,9 +71,9 @@
 					</a>
 				</DropdownMenu.Group>
 				<DropdownMenu.Separator />
-				<DropdownMenu.Item>
+				<DropdownMenu.Item onclick={signOut}>
 					<LogOut />
-					Log out
+					<span>Logout</span>
 				</DropdownMenu.Item>
 			</DropdownMenu.Content>
 		</DropdownMenu.Root>

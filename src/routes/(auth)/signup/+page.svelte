@@ -45,12 +45,6 @@
 			isLoading = false;
 		}
 	}
-
-	function handleKeydown(event: KeyboardEvent) {
-		if (event.key === 'Enter') {
-			handleSignUp();
-		}
-	}
 </script>
 
 <svelte:head>

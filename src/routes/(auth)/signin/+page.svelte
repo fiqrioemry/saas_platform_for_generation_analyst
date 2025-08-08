@@ -1,115 +1,115 @@
 <script lang="ts">
-	import { signIn } from '$lib/api/auth';
-	import { goto } from '$app/navigation';
-	import * as Card from '$lib/components/ui/card/index.js';
+	import { enhance } from '$app/forms';
+	import { toast } from 'svelte-sonner';
+	import { validateEmail } from '$lib/utils/validation';
+
+	// Components
+	import FormHeader from '$lib/components/shared/FormHeader.svelte';
+	import FormFooter from '$lib/components/shared/FormFooter.svelte';
+	import GoogleButton from '$lib/components/auth/GoogleButton.svelte';
+	import ErrorMessage from '$lib/components/shared/ErrorMessage.svelte';
 	import Label from '$lib/components/ui/label/label.svelte';
 	import Input from '$lib/components/ui/input/input.svelte';
-	import Button from '$lib/components/ui/button/button.svelte';
-	import GoogleButton from '$lib/components/auth/GoogleButton.svelte';
+	import { createCrudStore, createEnhancer } from '$lib/utils/crud';
 	import GithubButton from '$lib/components/auth/GithubButton.svelte';
+	import SubmitButton from '$lib/components/shared/SubmitButton.svelte';
 
-	export let data;
-	console.log('data', data);
+	let initialLoginState = {
+		email: '',
+		password: ''
+	};
 
-	let email = '';
-	let password = '';
-	let isLoading = false;
-	let error = '';
+	const form = createCrudStore(initialLoginState);
+	let isFormValid = $derived(
+		form.data.email && form.data.password && validateEmail(form.data.email)
+	);
 
-	async function handleSignIn() {
-		if (!email || !password) {
-			error = 'Please fill in all fields';
-			return;
+	const handleEnhance = createEnhancer(form, {
+		resetOnSuccess: true,
+		onSuccess: () => {
+			toast.success('Login successful! Redirecting...');
+		},
+		onError: () => {
+			form.reset();
 		}
-
-		isLoading = true;
-		error = '';
-
-		try {
-			await signIn(email, password);
-			goto('/settings/profile');
-		} catch (err: any) {
-			error = err.message || 'Failed to sign in';
-		} finally {
-			isLoading = false;
-		}
-	}
+	});
 </script>
 
 <svelte:head>
-	<title>Sign In - YourApp</title>
+	<title>Login | Supabase + SvelteKit Demo</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta name="description" content="Sign in to the Supabase + SvelteKit demo application" />
+	<meta property="og:description" content="Authentication demo with Supabase and SvelteKit SSR" />
 </svelte:head>
 
-<div
-	class="relative flex min-h-screen items-center justify-center bg-gray-50 bg-[radial-gradient(circle_at_1px_1px,rgba(0,0,0,0.15)_1px,transparent_0)] [background-size:20px_20px] px-4
-            py-12 sm:px-6
-            lg:px-8"
->
-	<div class="w-full max-w-md space-y-8">
-		<!-- Sign In Form -->
-		<Card.Root class="shadow-none">
-			<Card.Header class="text-center">
-				<Card.Title class="text-2xl font-bold">Task Generator</Card.Title>
-				<Card.Description>Welcome back! Please sign in to your account.</Card.Description>
-			</Card.Header>
-			<Card.Content class="space-y-4">
-				{#if error}
-					<div class="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
-						{error}
-					</div>
-				{/if}
+<div class="w-full max-w-md px-8 lg:px-0">
+	<!-- Header -->
+	<FormHeader title="Welcome Back" subtitle="Sign in to continue using the demo app" />
 
-				<form on:submit|preventDefault={handleSignIn} class="space-y-4">
-					<div class="space-y-2">
-						<Label for="email">Email</Label>
-						<Input
-							id="email"
-							type="email"
-							placeholder="Enter your email"
-							bind:value={email}
-							disabled={isLoading}
-							required
-						/>
-					</div>
+	<!-- Error Message -->
+	{#if form.error}
+		<ErrorMessage message={form.error} onclearError={form.clearMessages} />
+	{/if}
 
-					<div class="space-y-2">
-						<Label for="password">Password</Label>
-						<Input
-							id="password"
-							type="password"
-							placeholder="Enter your password"
-							bind:value={password}
-							disabled={isLoading}
-							required
-						/>
-					</div>
+	<!-- Login Form -->
+	<form method="POST" action="?/login" use:enhance={handleEnhance} class="mb-6">
+		<div class="space-y-2">
+			<Label for="email">Email</Label>
+			<Input
+				id="email"
+				type="email"
+				placeholder="john.doe@example.com"
+				bind:value={form.data.email}
+				disabled={form.loading}
+				required
+			/>
+		</div>
 
-					<Button type="submit" class="w-full" disabled={isLoading}>
-						{isLoading ? 'Signing in...' : 'Sign In'}
-					</Button>
-				</form>
+		<div class="space-y-2">
+			<Label for="password">password</Label>
+			<Input
+				id="password"
+				type="password"
+				placeholder="***********"
+				bind:value={form.data.password}
+				disabled={form.loading}
+				required
+			/>
+		</div>
 
-				<div class="relative mb-4">
-					<div class="absolute inset-0 flex items-center">
-						<span class="w-full border-t border-muted-foreground/40"></span>
-					</div>
-					<div class="relative flex justify-center text-sm">
-						<span class="bg-background px-2 text-muted-foreground">Or continue with</span>
-					</div>
-				</div>
+		<div class="text-end">
+			<a
+				href="/forgot-password"
+				class="text-sm text-blue-500 hover:cursor-pointer hover:underline disabled:opacity-50"
+			>
+				Forgot password?
+			</a>
+		</div>
 
-				<div class="grid grid-cols-2 items-center gap-4">
-					<GoogleButton loading={isLoading} />
-					<GithubButton loading={isLoading} />
-				</div>
+		<SubmitButton
+			buttonText="Sign In"
+			loading={form.loading}
+			disabled={form.loading}
+			buttonLoadingText="Signing In..."
+		/>
+	</form>
 
-				<div class="text-center">
-					<p class="text-sm text-gray-600">
-						Don't have an account?
-						<a href="/signup" class="font-medium text-blue-600 hover:text-blue-800"> Sign up </a>
-					</p>
-				</div>
-			</Card.Content>
-		</Card.Root>
+	<!-- Divider -->
+	<div class="relative mb-6">
+		<div class="absolute inset-0 flex items-center">
+			<span class="w-full border-t border-muted-foreground/80"></span>
+		</div>
+		<div class="relative flex justify-center text-sm">
+			<span class="bg-background px-2 text-muted-foreground">Or continue with</span>
+		</div>
 	</div>
+
+	<!-- Google Sign In -->
+	<div class="mb-6">
+		<GoogleButton loading={form.loading} />
+		<GithubButton loading={form.loading} />
+	</div>
+
+	<!-- Footer -->
+	<FormFooter description="Don't have an account?" buttonText="Sign up" path="/signup" />
 </div>

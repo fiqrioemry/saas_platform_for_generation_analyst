@@ -4,8 +4,9 @@
 	import { user } from '$lib/stores/auth';
 	import { supabase } from '$lib/supabase';
 	import { Loader } from '@lucide/svelte';
-	import favicon from '$lib/assets/favicon.svg';
 	import { invalidate } from '$app/navigation';
+	import favicon from '$lib/assets/favicon.svg';
+	import { Toaster } from '$lib/components/ui/sonner/index.js';
 
 	let { children, data } = $props();
 	let loading = $state(true);
@@ -29,6 +30,9 @@
 <svelte:head>
 	<link rel="icon" href={favicon} />
 </svelte:head>
+
+<!-- global component -->
+<Toaster theme="light" />
 
 {#if loading}
 	<div class="flex min-h-screen items-center justify-center bg-gray-50">
