@@ -1,16 +1,10 @@
 <script lang="ts">
-	import {
-		Card,
-		CardContent,
-		CardDescription,
-		CardHeader,
-		CardTitle,
-		Button,
-		Input,
-		Label
-	} from '$lib';
-	import { signIn } from '$lib/auth';
+	import { signIn } from '$lib/api/auth';
 	import { goto } from '$app/navigation';
+	import * as Card from '$lib/components/ui/card/index.js';
+	import Label from '$lib/components/ui/label/label.svelte';
+	import Input from '$lib/components/ui/input/input.svelte';
+	import Button from '$lib/components/ui/button/button.svelte';
 	import GoogleButton from '$lib/components/auth/GoogleButton.svelte';
 	import GithubButton from '$lib/components/auth/GithubButton.svelte';
 
@@ -53,12 +47,12 @@
 >
 	<div class="w-full max-w-md space-y-8">
 		<!-- Sign In Form -->
-		<Card class="shadow-none">
-			<CardHeader class="text-center">
-				<CardTitle class="text-2xl font-bold">Task Generator</CardTitle>
-				<CardDescription>Welcome back! Please sign in to your account.</CardDescription>
-			</CardHeader>
-			<CardContent class="space-y-4">
+		<Card.Root class="shadow-none">
+			<Card.Header class="text-center">
+				<Card.Title class="text-2xl font-bold">Task Generator</Card.Title>
+				<Card.Description>Welcome back! Please sign in to your account.</Card.Description>
+			</Card.Header>
+			<Card.Content class="space-y-4">
 				{#if error}
 					<div class="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
 						{error}
@@ -104,7 +98,7 @@
 					</div>
 				</div>
 
-				<div class="flex grid grid-cols-2 items-center gap-4">
+				<div class="grid grid-cols-2 items-center gap-4">
 					<GoogleButton loading={isLoading} />
 					<GithubButton loading={isLoading} />
 				</div>
@@ -115,7 +109,7 @@
 						<a href="/signup" class="font-medium text-blue-600 hover:text-blue-800"> Sign up </a>
 					</p>
 				</div>
-			</CardContent>
-		</Card>
+			</Card.Content>
+		</Card.Root>
 	</div>
 </div>

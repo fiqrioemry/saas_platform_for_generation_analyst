@@ -7,13 +7,10 @@ type Provider = (typeof SUPPORTED_PROVIDERS)[number];
 export const load: PageServerLoad = async ({ params, url, locals }) => {
 	const { supabase } = locals;
 
-	const { session, user, profile } = await locals.safeGetSession();
+	const { session, user } = await locals.safeGetSession();
 
 	if (user || session) {
-		if (profile && profile.is_onboarding_completed) {
-			throw redirect(303, '/settings');
-		}
-		throw redirect(303, '/onboarding');
+		throw redirect(303, '/');
 	}
 
 	const provider = params.provider as Provider;
