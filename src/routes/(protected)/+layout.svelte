@@ -14,7 +14,7 @@
 
 	// Derived state untuk current path
 	const currentPath = $derived(page.url.pathname);
-	console.log('this is current path ', currentPath);
+
 	// Effect untuk auto collapse pada halaman tertentu
 	$effect(() => {
 		if (fullWidthPages.some((path) => currentPath.startsWith(path))) {

@@ -144,12 +144,12 @@
 		<div class="flex flex-1 items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
 			<div class="w-full max-w-md space-y-8">
 				<!-- Sign Up Form -->
-				<Card>
-					<CardHeader class="text-center">
-						<CardTitle class="text-2xl font-bold">Task Generator</CardTitle>
-						<CardDescription>Create new account and start generating tasks</CardDescription>
-					</CardHeader>
-					<CardContent class="space-y-4">
+				<Card.Root>
+					<Card.Header class="text-center">
+						<Card.Title class="text-2xl font-bold">Task Generator</Card.Title>
+						<Card.Description>Create new account and start generating tasks</Card.Description>
+					</Card.Header>
+					<Card.Content class="space-y-4">
 						{#if error}
 							<div
 								class="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600"
@@ -216,8 +216,8 @@
 								</a>
 							</p>
 						</div>
-					</CardContent>
-				</Card>
+					</Card.Content>
+				</Card.Root>
 			</div>
 		</div>
 	</div>
