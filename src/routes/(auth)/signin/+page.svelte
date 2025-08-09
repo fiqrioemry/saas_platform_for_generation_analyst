@@ -1,11 +1,9 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { toast } from 'svelte-sonner';
-	import { validateEmail } from '$lib/utils/validation';
 
 	// Components
-	import FormHeader from '$lib/components/shared/FormHeader.svelte';
-	import FormFooter from '$lib/components/shared/FormFooter.svelte';
+	import * as Card from '$lib/components/ui/card/index.js';
 	import GoogleButton from '$lib/components/auth/GoogleButton.svelte';
 	import ErrorMessage from '$lib/components/shared/ErrorMessage.svelte';
 	import Label from '$lib/components/ui/label/label.svelte';
@@ -20,17 +18,11 @@
 	};
 
 	const form = createCrudStore(initialLoginState);
-	let isFormValid = $derived(
-		form.data.email && form.data.password && validateEmail(form.data.email)
-	);
 
 	const handleEnhance = createEnhancer(form, {
 		resetOnSuccess: true,
 		onSuccess: () => {
 			toast.success('Login successful! Redirecting...');
-		},
-		onError: () => {
-			form.reset();
 		}
 	});
 </script>
@@ -44,8 +36,10 @@
 
 <div class="w-full max-w-md px-8 lg:px-0">
 	<!-- Header -->
-	<FormHeader title="Welcome Back" subtitle="Sign in to continue using the demo app" />
-
+	<Card.Header class="text-center">
+		<Card.Title class="text-2xl font-bold">Task Generator</Card.Title>
+		<Card.Description>Create new account and start generating tasks</Card.Description>
+	</Card.Header>
 	<!-- Error Message -->
 	{#if form.error}
 		<ErrorMessage message={form.error} onclearError={form.clearMessages} />
@@ -111,5 +105,16 @@
 	</div>
 
 	<!-- Footer -->
-	<FormFooter description="Don't have an account?" buttonText="Sign up" path="/signup" />
+
+	<div class="mt-8 text-center">
+		<p class="text-sm text-muted-foreground">
+			Dont have an account?
+			<a
+				href="/signup"
+				class="cursor-pointer font-medium text-blue-500 transition-colors hover:text-blue-500/80"
+			>
+				sign up
+			</a>
+		</p>
+	</div>
 </div>

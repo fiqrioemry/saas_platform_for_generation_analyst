@@ -5,7 +5,6 @@
 	import { supabase } from '$lib/supabase';
 	import { Loader } from '@lucide/svelte';
 	import { invalidate } from '$app/navigation';
-	import favicon from '$lib/assets/favicon.svg';
 	import { Toaster } from '$lib/components/ui/sonner/index.js';
 
 	let { children, data } = $props();
@@ -26,10 +25,6 @@
 		return () => subscription.unsubscribe();
 	});
 </script>
-
-<svelte:head>
-	<link rel="icon" href={favicon} />
-</svelte:head>
 
 <!-- global component -->
 <Toaster theme="light" />
